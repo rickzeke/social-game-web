@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>真心话大冒险</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B9D;
+            --secondary: #8B5CF6;
+            --accent: #FFD93D;
+            --bg-dark: #1A1A2E;
+            --card-bg: #16213E;
+            --text-main: #FFFFFF;
+            --text-sub: #A0AEC0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 背景动画 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* 页面容器 */
+        .page {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .page.hidden {
+            display: none;
+        }
+
+        /* 首页样式 */
+        .home-page {
+            text-align: center;
+        }
+
+        .logo {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .subtitle {
+            color: var(--text-sub);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .hero-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        .hero-icon:nth-child(2) { animation-delay: 0.3s; }
+        .hero-icon:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .rules {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 40px;
+            max-width: 350px;
+        }
+
+        .rules h3 {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            color: var(--accent);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .rules ul {
+            text-align: left;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .rules li::before {
+            content: "✨ ";
+        }
+
+        .btn {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.4rem;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 157, 0.6);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        /* 游戏页面 */
+        .game-page {
+            justify-content: flex-start;
+            padding-top: 40px;
+        }
+
+        .player-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-bottom: 30px;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .player-name {
+            font-weight: 700;
+        }
+
+        .choice-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .choice-btn {
+            flex: 1;
+            padding: 25px 20px;
+            border: none;
+            border-radius: 20px;
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .choice-btn.truth {
+            background: linear-gradient(135deg, #4ECDC4, #44A08D);
+            color: white;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+        }
+
+        .choice-btn.dare {
+            background: linear-gradient(135deg, #FF6B9D, #FF8E53);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 107, 157, 0.4);
+        }
+
+        .choice-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .choice-btn:active {
+            transform: scale(0.95);
+        }
+
+        .choice-icon {
+            font-size: 2rem;
+        }
+
+        /* 挑战卡片 */
+        .challenge-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: cardAppear 0.5s ease;
+            display: none;
+        }
+
+        .challenge-card.show {
+            display: block;
+        }
+
+        @keyframes cardAppear {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8) translateY(20px); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+            }
+        }
+
+        .challenge-type {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .challenge-type.truth { color: #4ECDC4; }
+        .challenge-type.dare { color: #FF6B9D; }
+
+        .challenge-content {
+            font-size: 1.4rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-small {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 30px;
+            font-family: 'ZCOOL KuaiLe', cursive;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--accent), #FFA500);
+            color: #1A1A2E;
+        }
+
+        .btn-share {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-next:hover, .btn-share:hover {
+            transform: translateY(-2px);
+        }
+
+        /* 分享弹窗 */
+        .share-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .share-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .share-content {
+            background: var(--card-bg);
+            border-radius: 25px;
+            padding: 30px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+        }
+
+        .share-modal.show .share-content {
+            transform: scale(1);
+        }
+
+        .share-title {
+            font-family: 'ZCOOL KuaiLe', cursive;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+        }
+
+        .share-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .share-btn.wechat { background: #07C160; }
+        .share-btn.moments { background: #FF9500; }
+        .share-btn.copy { 
+            background: linear-gradient(135deg, var(--secondary), var(--primary)); 
+        }
+
+        .share-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .close-modal {
+            margin-top: 20px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: var(--text-sub);
+        }
+
+        /* Toast 提示 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--card-bg);
+            padding: 15px 30px;
+            border-radius: 30px;
+            z-index: 200;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .logo { font-size: 2.8rem; }
+            .choice-btn { padding: 20px 15px; font-size: 1.1rem; }
+            .challenge-content { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景粒子 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 首页 -->
+    <div class="page home-page" id="homePage">
+        <h1 class="logo">真心话大冒险</h1>
+        <p class="subtitle">和朋友一起玩最经典的社交游戏</p>
+        
+        <div class="hero-icons">
+            <div class="hero-icon">💕</div>
+            <div class="hero-icon">🎭</div>
+            <div class="hero-icon">🎉</div>
+        </div>
+
+        <div class="rules">
+            <h3>游戏规则</h3>
+            <ul>
+                <li>轮流选择"真心话"或"大冒险"</li>
+                <li>选择真心话必须如实回答问题</li>
+                <li>选择大冒险必须完成挑战任务</li>
+                <li>完成后可以分享给朋友哦~</li>
+            </ul>
+        </div>
+
+        <button class="btn btn-primary" onclick="startGame()">开始游戏</button>
+    </div>
+
+    <!-- 游戏页面 -->
+    <div class="page game-page hidden" id="gamePage">
+        <div class="player-badge">
+            <div class="player-avatar" id="playerAvatar">😊</div>
+            <span class="player-name" id="playerName">玩家 1</span>
+        </div>
+
+        <div class="choice-buttons" id="choiceButtons">
+            <button class="choice-btn truth" onclick="showChallenge('truth')">
+                <span class="choice-icon">💬</span>
+                真心话
+            </button>
+            <button class="choice-btn dare" onclick="showChallenge('dare')">
+                <span class="choice-icon">🎯</span>
+                大冒险
+            </button>
+        </div>
+
+        <div class="challenge-card" id="challengeCard">
+            <div class="challenge-type" id="challengeType">
+                <span id="typeIcon">💬</span>
+                <span id="typeText">真心话</span>
+            </div>
+            <div class="challenge-content" id="challengeContent">
+                你上一次说谎是什么时候？
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-small btn-next" onclick="nextChallenge()">下一个</button>
+                <button class="btn btn-small btn-share" onclick="openShareModal()">分享</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分享弹窗 -->
+    <div class="share-modal" id="shareModal">
+        <div class="share-content">
+            <h3 class="share-title">分享给朋友</h3>
+            <div class="share-buttons">
+                <button class="share-btn wechat" onclick="shareToWechat()">
+                    <span>💬</span> 微信好友
+                </button>
+                <button class="share-btn moments" onclick="shareToMoments()">
+                    <span>🌐</span> 朋友圈
+                </button>
+                <button class="share-btn copy" onclick="copyLink()">
+                    <span>📋</span> 复制链接
+                </button>
+            </div>
+            <button class="btn btn-small close-modal" onclick="closeShareModal()">关闭</button>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">链接已复制！快分享给朋友吧~</div>
+
+    <script>
+        // 题库
+        const truthQuestions = [
+            "你上一次说谎是什么时候？",
+            "你暗恋过最好的朋友吗？",
+            "你做过最尴尬的事是什么？",
+            "你最大的秘密是什么？",
+            "你最喜欢谁不喜欢谁？",
+            "你撒过最大的谎是什么？",
+            "你最遗憾的事情是什么？",
+            "你偷偷喜欢过老师吗？",
+            "你最害怕失去什么？",
+            "你用过别人的东西吗？",
+            "你最想删除的记忆是什么？",
+            "你做过最疯狂的事是什么？",
+            "你最自卑的地方是什么？",
+            "你偷偷喜欢过几个人的秘密？",
+            "你最不想让父母知道的事？",
+            "你背地里说过朋友坏话吗？",
+            "你考试作过弊吗？",
+            "你收到过最难忘的情书？",
+            "你为谁哭过最伤心？",
+            "你心里最大的愿望是什么？",
+            "你最想和谁交换人生一天？",
+            "你隐藏了哪些兴趣爱好？",
+            "你做过什么对不起朋友的事？",
+            "你最怕被问什么问题？",
+            "你第一次心跳加速是因为谁？",
+            "你有什么无法解释的经历？",
+            "你最想收到的礼物是什么？",
+            "你讨厌什么样的追求者？",
+            "你相信缘分天注定吗？",
+            "你最爱听什么歌？",
+            "你最想实现的梦想是什么？"
+        ];
+
+        const dareTasks = [
+            "模仿群里某个人说话",
+            "给最近联系人表白",
+            "用嘴巴画一个笑脸",
+            "朗读一段绕口令",
+            "对着镜子做鬼脸30秒",
+            "用屁股写自己的名字",
+            "假装自己是机器人走路",
+            "给在场每个人起昵称",
+            "用三种不同声音说话",
+            "学某种动物叫声",
+            "做10个深蹲",
+            "含着水说话30秒",
+            "用左手写自己名字",
+            "学电视剧里反派笑",
+            "模仿身边的人打呼噜",
+            "给通讯录第5个人打电话",
+            "用歌声表达我现在的心情",
+            "cosplay一种食物",
+            "假装自己是网红直播",
+            "即兴表演一段广告",
+            "用屁股写字",
+            "单腿站立30秒",
+            "模仿婴儿爬行",
+            "学大猩猩走路",
+            "用脸滚键盘",
+            "假装被电到跳舞",
+            "用不同国家的口音说话",
+            "表演一个懒腰",
+            "假装自己是雕像",
+            "学企鹅走路",
+            "用手指数数到50",
+            "表演便秘的表情"
+        ];
+
+        // 游戏状态
+        let currentPlayer = 1;
+        let currentType = '';
+        let playerNames = ['玩家 1', '玩家 2', '玩家 3', '玩家 4', '玩家 5'];
+        let playerAvatars = ['😊', '😎', '🤩', '🥳', '😄'];
+
+        // 创建背景粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#FF6B9D', '#8B5CF6', '#FFD93D', '#4ECDC4', '#FF8E53'];
+            
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 20 + 10;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // 开始游戏
+        function startGame() {
+            document.getElementById('homePage').classList.add('hidden');
+            document.getElementById('gamePage').classList.remove('hidden');
+            resetGame();
+        }
+
+        // 重置游戏
+        function resetGame() {
+            currentPlayer = 1;
+            updatePlayerDisplay();
+            document.getElementById('challengeCard').classList.remove('show');
+            document.getElementById('choiceButtons').style.display = 'flex';
+        }
+
+        // 更新玩家显示
+        function updatePlayerDisplay() {
+            const idx = (currentPlayer - 1) % playerNames.length;
+            document.getElementById('playerName').textContent = playerNames[idx];
+            document.getElementById('playerAvatar').textContent = playerAvatars[idx];
+        }
+
+        // 显示挑战
+        function showChallenge(type) {
+            currentType = type;
+            const isTruth = type === 'truth';
+            
+            // 更新卡片样式
+            const card = document.getElementById('challengeCard');
+            const typeEl = document.getElementById('challengeType');
+            const typeIcon = document.getElementById('typeIcon');
+            const typeText = document.getElementById('typeText');
+            const content = document.getElementById('challengeContent');
+            
+            typeEl.className = 'challenge-type ' + type;
+            typeIcon.textContent = isTruth ? '💬' : '🎯';
+            typeText.textContent = isTruth ? '真心话' : '大冒险';
+            
+            // 随机抽取题目
+            const list = isTruth ? truthQuestions : dareTasks;
+            content.textContent = list[Math.floor(Math.random() * list.length)];
+            
+            // 显示卡片
+            document.getElementById('choiceButtons').style.display = 'none';
+            card.classList.add('show');
+        }
+
+        // 下一个挑战
+        function nextChallenge() {
+            currentPlayer++;
+            updatePlayerDisplay();
+            document.getElementById('challengeCard').classList.remove('show');
+            document.getElementById('choiceButtons').style.display = 'flex';
+        }
+
+        // 分享相关
+        function openShareModal() {
+            document.getElementById('shareModal').classList.add('show');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.remove('show');
+        }
+
+        function shareToWechat() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '真心话大冒险',
+                    text: '快来和我一起玩真心话大冒险！',
+                    url: window.location.href
+                });
+            } else {
+                showToast('请使用微信浏览器分享');
+            }
+        }
+
+        function shareToMoments() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '真心话大冒险',
+                    text: '我刚刚玩了这个游戏，快来挑战！',
+                    url: window.location.href
+                });
+            } else {
+                showToast('请使用微信分享到朋友圈');
+            }
+        }
+
+        function copyLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('链接已复制！快分享给朋友吧~');
+            }).catch(() => {
+                // 兼容
+                const input = document.createElement('input');
+                input.value = url;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                showToast('链接已复制！快分享给朋友吧~');
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('shareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeShareModal();
+            }
+        });
+
+        // 初始化
+        createParticles();
+    </script>
+</body>
+</html>
